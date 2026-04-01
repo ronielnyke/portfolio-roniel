@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact | Portfolio System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #FF6B6B;
+            --secondary: #4ECDC4;
+            --accent: #FFE66D;
+            --dark: #1a1a2e;
+            --darker: #0f0f1a;
+            --light: #f7f7f7;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--darker);
+            color: var(--light);
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* Background Music Controls */
+        .music-controls {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .music-controls:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .music-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .music-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .music-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            min-width: 150px;
+        }
+
+        .music-track-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--light);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .music-track-number {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .music-progress {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .music-progress-bar {
+            height: 100%;
+            background: var(--secondary);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .music-visualizer {
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 30px;
+        }
+
+        .music-bar {
+            width: 4px;
+            background: var(--secondary);
+            border-radius: 2px;
+            animation: musicWave 1s ease-in-out infinite;
+        }
+
+        .music-bar:nth-child(1) { height: 10px; animation-delay: 0s; }
+        .music-bar:nth-child(2) { height: 20px; animation-delay: 0.1s; }
+        .music-bar:nth-child(3) { height: 15px; animation-delay: 0.2s; }
+        .music-bar:nth-child(4) { height: 25px; animation-delay: 0.3s; }
+        .music-bar:nth-child(5) { height: 12px; animation-delay: 0.4s; }
+
+        @keyframes musicWave {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(1.5); }
+        }
+
+        .music-controls.paused .music-bar {
+            animation-play-state: paused;
+            height: 5px;
+        }
+
+        .music-nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        .music-nav-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .music-nav-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            transform: scale(1.1);
+        }
+
+        /* Job Portal Button */
+        .job-portal-btn {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 9999;
+            padding: 15px 30px;
+            background: var(--gradient-2);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-family: 'Syne', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(240, 147, 251, 0.3);
+        }
+
+        .job-portal-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(240, 147, 251, 0.5);
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s ease;
+            mix-blend-mode: difference;
+        }
+
+        .cursor-follower {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 107, 107, 0.3);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            transition: transform 0.3s ease;
+        }
+
+        .cursor.hover {
+            transform: scale(2);
+            background: var(--primary);
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(15, 15, 26, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            padding: 10px 0;
+            transition: color 0.3s;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-2);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        .voice-toggle {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--light);
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        .voice-toggle:hover {
+            background: var(--primary);
+            transform: scale(1.05);
+        }
+
+        .voice-toggle.active {
+            background: var(--secondary);
+        }
+
+        /* Page Content */
+        .page-content {
+            padding-top: 100px;
+            min-height: 100vh;
+            background: var(--dark);
+        }
+
+        .page-header {
+            text-align: center;
+            padding: 80px 50px 50px;
+        }
+
+        .page-title {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--gradient-1);
+            border-radius: 2px;
+        }
+
+        .page-subtitle {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.2rem;
+            margin-top: 30px;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            padding: 50px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .contact-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(255, 107, 107, 0.2);
+        }
+
+        .contact-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .contact-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 10px;
+        }
+
+        .contact-value {
+            font-size: 1.1rem;
+            color: var(--light);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .contact-value:hover {
+            color: var(--primary);
+        }
+
+        .contact-form {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 50px;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            color: var(--light);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .form-group label {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            color: rgba(255, 255, 255, 0.5);
+            transition: all 0.3s;
+            pointer-events: none;
+        }
+
+        .form-group input:focus + label,
+        .form-group input:not(:placeholder-shown) + label,
+        .form-group textarea:focus + label,
+        .form-group textarea:not(:placeholder-shown) + label {
+            top: -10px;
+            left: 15px;
+            font-size: 0.85rem;
+            color: var(--primary);
+            background: var(--dark);
+            padding: 0 10px;
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 20px;
+            background: var(--gradient-1);
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-family: 'Syne', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Footer */
+        .footer {
+            padding: 50px;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .social-links a {
+            width: 50px;
+            height: 50px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light);
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 1.2rem;
+        }
+
+        .social-links a:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            transform: translateY(-5px) rotate(360deg);
+        }
+
+        .footer-text {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Scroll Progress */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: var(--gradient-1);
+            z-index: 1001;
+            width: 0%;
+        }
+
+        /* Sound Wave Animation */
+        .sound-wave {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            height: 20px;
+        }
+
+        .sound-wave span {
+            width: 3px;
+            background: currentColor;
+            border-radius: 3px;
+            animation: wave 1s ease-in-out infinite;
+        }
+
+        .sound-wave span:nth-child(1) { animation-delay: 0s; height: 8px; }
+        .sound-wave span:nth-child(2) { animation-delay: 0.1s; height: 15px; }
+        .sound-wave span:nth-child(3) { animation-delay: 0.2s; height: 10px; }
+        .sound-wave span:nth-child(4) { animation-delay: 0.3s; height: 18px; }
+        .sound-wave span:nth-child(5) { animation-delay: 0.4s; height: 12px; }
+
+        @keyframes wave {
+            0%, 100% { transform: scaleY(0.5); }
+            50% { transform: scaleY(1); }
+        }
+
+        .voice-toggle:not(.active) .sound-wave span {
+            animation-play-state: paused;
+            height: 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .nav {
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .contact-info {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-form {
+                padding: 30px 20px;
+            }
+
+            .contact-section {
+                padding: 20px;
+            }
+
+            .music-controls {
+                bottom: 20px;
+                right: 20px;
+                padding: 10px 15px;
+                flex-wrap: wrap;
+                max-width: calc(100vw - 40px);
+            }
+
+            .music-info {
+                min-width: 100px;
+                max-width: 120px;
+            }
+
+            .job-portal-btn {
+                bottom: 20px;
+                left: 20px;
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .menu-toggle span {
+            width: 25px;
+            height: 2px;
+            background: var(--light);
+            transition: all 0.3s;
+        }
+
+        @media (max-width: 968px) {
+            .menu-toggle {
+                display: flex;
+            }
+        }
+    </style>
+<base target="_blank">
+<base target="_blank">
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
+
+    <!-- Scroll Progress -->
+    <div class="scroll-progress"></div>
+
+    <!-- Job Portal Button -->
+    <a href="job-portal.html" class="job-portal-btn" data-voice="Job Application Portal">
+        <span>💼</span>
+        <span>We're Hiring!</span>
+    </a>
+
+    <!-- Music Controls -->
+    <div class="music-controls paused" id="musicControls">
+        <button class="music-btn" id="musicToggle" onclick="toggleMusic()" title="Play/Pause">
+            <span id="musicIcon">▶️</span>
+        </button>
+
+        <div class="music-info">
+            <div class="music-track-name" id="trackName">No Track Playing</div>
+            <div class="music-track-number" id="trackNumber">Track 0 of 0</div>
+            <div class="music-progress">
+                <div class="music-progress-bar" id="progressBar"></div>
+            </div>
+        </div>
+
+        <div class="music-nav">
+            <button class="music-nav-btn" onclick="previousTrack()" title="Previous">⏮</button>
+            <button class="music-nav-btn" onclick="nextTrack()" title="Next">⏭</button>
+        </div>
+
+        <div class="music-visualizer">
+            <div class="music-bar"></div>
+            <div class="music-bar"></div>
+            <div class="music-bar"></div>
+            <div class="music-bar"></div>
+            <div class="music-bar"></div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <a href="index.html" class="logo">PORTFOLIO.OS</a>
+
+        <ul class="nav-links">
+            <li><a href="index.html" data-voice="Home section">Home</a></li>
+            <li><a href="projects.html" data-voice="Projects section">Projects</a></li>
+            <li><a href="skills.html" data-voice="Skills section">Skills</a></li>
+            <li><a href="about.html" data-voice="About section">About</a></li>
+            <li><a href="contact.html" class="active" data-voice="Contact page">Contact</a></li>
+        </ul>
+
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <button class="voice-toggle" id="voiceToggle" onclick="toggleVoice()">
+                <div class="sound-wave">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <span>Voice</span>
+            </button>
+
+            <div class="menu-toggle" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="page-content">
+        <div class="page-header">
+            <h1 class="page-title" data-voice="Get in Touch">Get in Touch</h1>
+            <p class="page-subtitle" data-voice="Let's create something amazing together">
+                Let's create something amazing together
+            </p>
+        </div>
+
+        <section class="contact-section">
+            <div class="contact-info">
+                <div class="contact-card" data-voice="Email contact">
+                    <div class="contact-icon">📧</div>
+                    <div class="contact-label">Email</div>
+                    <a href="mailto:hello@portfolio.os" class="contact-value">hello@portfolio.os</a>
+                </div>
+                <div class="contact-card" data-voice="Phone contact">
+                    <div class="contact-icon">📱</div>
+                    <div class="contact-label">Phone</div>
+                    <a href="tel:+1234567890" class="contact-value">+1 (234) 567-890</a>
+                </div>
+                <div class="contact-card" data-voice="Location">
+                    <div class="contact-icon">📍</div>
+                    <div class="contact-label">Location</div>
+                    <span class="contact-value">San Francisco, CA</span>
+                </div>
+            </div>
+
+            <form class="contact-form" onsubmit="handleSubmit(event)">
+                <div class="form-group">
+                    <input type="text" id="name" placeholder=" " required>
+                    <label for="name">Your Name</label>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="email" placeholder=" " required>
+                    <label for="email">Your Email</label>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="subject" placeholder=" ">
+                    <label for="subject">Subject</label>
+                </div>
+                <div class="form-group">
+                    <textarea id="message" placeholder=" " required></textarea>
+                    <label for="message">Your Message</label>
+                </div>
+                <button type="submit" class="submit-btn" data-voice="Send message button">
+                    Send Message
+                </button>
+            </form>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="social-links">
+            <a href="#" aria-label="GitHub" data-voice="GitHub">GH</a>
+            <a href="#" aria-label="LinkedIn" data-voice="LinkedIn">LI</a>
+            <a href="#" aria-label="Twitter" data-voice="Twitter">TW</a>
+            <a href="#" aria-label="Dribbble" data-voice="Dribbble">DR</a>
+        </div>
+        <p class="footer-text">© 2026 Portfolio.OS. Crafted with passion.</p>
+    </footer>
+
+    <script>
+        // Initialize EmailJS
+        emailjs.init('YOUR_PUBLIC_KEY');
+
+        // ==================== MUSIC PLAYLIST SYSTEM ====================
+        const playlist = [
+            { src: '../bg-music.mp3', name: 'Background Music 1' },
+            { src: '../music2.mp3', name: 'Background Music 2' },
+            { src: '../music3.mp3', name: 'Background Music 3' }
+        ];
+
+        let currentTrackIndex = 0;
+        let musicPlaying = false;
+        let audioElement = null;
+        let progressInterval = null;
+
+        const musicControls = document.getElementById('musicControls');
+        const musicIcon = document.getElementById('musicIcon');
+        const trackName = document.getElementById('trackName');
+        const trackNumber = document.getElementById('trackNumber');
+        const progressBar = document.getElementById('progressBar');
+
+        function initAudio() {
+            if (audioElement) {
+                audioElement.pause();
+                audioElement.removeEventListener('ended', onTrackEnded);
+                audioElement.removeEventListener('timeupdate', updateProgress);
+                audioElement.removeEventListener('loadedmetadata', updateProgress);
+            }
+
+            audioElement = new Audio(playlist[currentTrackIndex].src);
+            audioElement.addEventListener('ended', onTrackEnded);
+            audioElement.addEventListener('timeupdate', updateProgress);
+            audioElement.addEventListener('loadedmetadata', updateProgress);
+            updateTrackInfo();
+        }
+
+        function updateTrackInfo() {
+            trackName.textContent = playlist[currentTrackIndex].name;
+            trackNumber.textContent = `Track ${currentTrackIndex + 1} of ${playlist.length}`;
+        }
+
+        function updateProgress() {
+            if (audioElement && audioElement.duration) {
+                const progress = (audioElement.currentTime / audioElement.duration) * 100;
+                progressBar.style.width = progress + '%';
+            }
+        }
+
+        function onTrackEnded() {
+            nextTrack();
+        }
+
+        function toggleMusic() {
+            if (!audioElement) {
+                initAudio();
+            }
+
+            if (musicPlaying) {
+                audioElement.pause();
+                musicIcon.textContent = '▶️';
+                musicControls.classList.add('paused');
+                clearInterval(progressInterval);
+            } else {
+                audioElement.play().then(() => {
+                    musicIcon.textContent = '⏸️';
+                    musicControls.classList.remove('paused');
+                    progressInterval = setInterval(updateProgress, 100);
+                }).catch(e => {
+                    console.log('Audio play failed:', e);
+                    nextTrack();
+                });
+            }
+            musicPlaying = !musicPlaying;
+        }
+
+        function nextTrack() {
+            currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+            const wasPlaying = musicPlaying;
+            initAudio();
+
+            if (wasPlaying) {
+                audioElement.play().then(() => {
+                    musicIcon.textContent = '⏸️';
+                    musicControls.classList.remove('paused');
+                }).catch(e => {
+                    console.log('Next track play failed:', e);
+                });
+            } else {
+                musicIcon.textContent = '▶️';
+                musicControls.classList.add('paused');
+            }
+        }
+
+        function previousTrack() {
+            currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
+            const wasPlaying = musicPlaying;
+            initAudio();
+
+            if (wasPlaying) {
+                audioElement.play().then(() => {
+                    musicIcon.textContent = '⏸️';
+                    musicControls.classList.remove('paused');
+                }).catch(e => {
+                    console.log('Previous track play failed:', e);
+                });
+            } else {
+                musicIcon.textContent = '▶️';
+                musicControls.classList.add('paused');
+            }
+        }
+
+        window.addEventListener('load', () => {
+            initAudio();
+        });
+
+        // ==================== VOICE SYSTEM ====================
+        let voiceEnabled = false;
+        const synth = window.speechSynthesis;
+
+        function toggleVoice() {
+            voiceEnabled = !voiceEnabled;
+            const btn = document.getElementById('voiceToggle');
+            btn.classList.toggle('active', voiceEnabled);
+
+            if (voiceEnabled) {
+                speak('Voice navigation enabled. Hover over elements to hear descriptions.');
+            } else {
+                synth.cancel();
+            }
+        }
+
+        function speak(text) {
+            if (!voiceEnabled || !text) return;
+            synth.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 1;
+            utterance.pitch = 1;
+            utterance.volume = 1;
+            synth.speak(utterance);
+        }
+
+        document.querySelectorAll('[data-voice]').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                speak(el.getAttribute('data-voice'));
+            });
+        });
+
+        // ==================== CUSTOM CURSOR ====================
+        const cursor = document.querySelector('.cursor');
+        const cursorFollower = document.querySelector('.cursor-follower');
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+
+            setTimeout(() => {
+                cursorFollower.style.left = e.clientX - 10 + 'px';
+                cursorFollower.style.top = e.clientY - 10 + 'px';
+            }, 100);
+        });
+
+        document.querySelectorAll('a, button, .contact-card').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+
+        // ==================== SCROLL PROGRESS ====================
+        window.addEventListener('scroll', () => {
+            const scrollProgress = document.querySelector('.scroll-progress');
+            const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrolled = (window.scrollY / scrollHeight) * 100;
+            scrollProgress.style.width = scrolled + '%';
+        });
+
+        // ==================== FORM SUBMISSION ====================
+        function handleSubmit(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('.submit-btn');
+            const originalText = btn.textContent;
+            btn.textContent = 'Message Sent!';
+            btn.style.background = 'linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%)';
+
+            if (voiceEnabled) {
+                speak('Message sent successfully!');
+            }
+
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = '';
+                e.target.reset();
+            }, 3000);
+        }
+
+        // ==================== MOBILE MENU ====================
+        function toggleMenu() {
+            if (voiceEnabled) {
+                speak('Mobile menu toggled');
+            }
+        }
+    </script>
+</body>
+</html>
